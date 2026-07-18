@@ -1,7 +1,7 @@
 name: steam_account_companion
 description: A local-first Steam Guard account companion for personal use.
 publish_to: "none"
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ">=3.6.0 <4.0.0"
