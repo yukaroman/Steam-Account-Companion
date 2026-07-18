@@ -1,0 +1,84 @@
+{
+  "description": "Fixed Steam Guard vectors for unit tests. Secrets are synthetic demo keys only — never replace with real shared_secret values.",
+  "provenance": {
+    "generated_by": "tool/generate_steam_guard_vectors.py",
+    "generator_language": "Python 3",
+    "generator_stdlib": ["hmac", "hashlib", "struct", "base64"],
+    "algorithm_reference": "https://github.com/winauth/SteamAuth/blob/master/index.js",
+    "algorithm_reference_note": "Cross-checked HMAC-SHA1, 30s counter, big-endian interval, dynamic truncation, and STEAMCHARS mapping against WinAuth/SteamAuth lineage used by BeyondDimension/WinAuth.",
+    "cross_check_repo": "https://github.com/BeyondDimension/WinAuth",
+    "notes": "Expected codes were produced by the independent Python generator, not by the Dart codec under test."
+  },
+  "algorithm": {
+    "hmac": "SHA1",
+    "period_seconds": 30,
+    "digits": 5,
+    "alphabet": "23456789BCDFGHJKMNPQRTVWXY"
+  },
+  "vectors": [
+    {
+      "id": "zero-epoch",
+      "shared_secret_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "unix_seconds": 0,
+      "server_time_diff_ms": 0,
+      "expected_code": "RYH4D",
+      "expected_remaining": 30
+    },
+    {
+      "id": "first-boundary",
+      "shared_secret_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "unix_seconds": 30,
+      "server_time_diff_ms": 0,
+      "expected_code": "DR2DK",
+      "expected_remaining": 30
+    },
+    {
+      "id": "same-window-as-epoch",
+      "shared_secret_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "unix_seconds": 29,
+      "server_time_diff_ms": 0,
+      "expected_code": "RYH4D",
+      "expected_remaining": 1
+    },
+    {
+      "id": "classic-timestamp",
+      "shared_secret_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "unix_seconds": 1234567890,
+      "server_time_diff_ms": 0,
+      "expected_code": "76TJG",
+      "expected_remaining": 30
+    },
+    {
+      "id": "demo-primary-secret",
+      "shared_secret_b64": "dGVzdC1zaGFyZWQtc2VjcmV0ISE=",
+      "unix_seconds": 1700000000,
+      "server_time_diff_ms": 0,
+      "expected_code": "6CMP4",
+      "expected_remaining": 10
+    },
+    {
+      "id": "demo-trading-secret",
+      "shared_secret_b64": "MTIzNDU2Nzg5MGFiY2RlZg==",
+      "unix_seconds": 1600000000,
+      "server_time_diff_ms": 0,
+      "expected_code": "PFPH4",
+      "expected_remaining": 20
+    },
+    {
+      "id": "demo-alt-secret",
+      "shared_secret_b64": "SGVsbG9Xb3JsZFNlY3JldCE=",
+      "unix_seconds": 1893456000,
+      "server_time_diff_ms": 0,
+      "expected_code": "VPWYN",
+      "expected_remaining": 30
+    },
+    {
+      "id": "server-time-skew-rolls-window",
+      "shared_secret_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "unix_seconds": 100,
+      "server_time_diff_ms": 20000,
+      "expected_code": "6NCWD",
+      "expected_remaining": 30
+    }
+  ]
+}

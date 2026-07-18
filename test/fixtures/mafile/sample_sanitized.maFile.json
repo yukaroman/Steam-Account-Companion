@@ -1,0 +1,19 @@
+{
+  "shared_secret": "dGVzdC1zaGFyZWQtc2VjcmV0ISE=",
+  "serial_number": "TEST1234567890",
+  "revocation_code": "R12345",
+  "uri": "otpauth://totp/Steam:demo_import?secret=TEST&issuer=Steam",
+  "server_time": 1700000000,
+  "account_name": "demo_import",
+  "token_gid": "token-gid-demo",
+  "identity_secret": "aWRlbnRpdHktc2VjcmV0LTE=",
+  "secret_1": "c2VjcmV0MQ==",
+  "status": 1,
+  "device_id": "android:11111111-1111-4111-8111-111111111111",
+  "fully_enrolled": true,
+  "Session": {
+    "SteamID": 76561198000000001,
+    "SessionID": "demo_session_id_not_real",
+    "SteamLoginSecure": "76561198000000001%7C%7Cdemo_token_not_real"
+  }
+}

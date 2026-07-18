@@ -1,0 +1,50 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+coverage/
+release/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Apple
+.DS_Store
+ios/Pods/
+ios/.symlinks/
+macos/Pods/
+**/xcuserdata/
+# Personal Apple Team ID / local code signing (use Local.xcconfig.example)
+ios/Flutter/Local.xcconfig
+macos/Runner/Configs/Local.xcconfig
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+
+# Security: never commit secrets or imported account data
+*.maFile
+*.mafile
+*.sacbak
+*.secrets.json
+*.backup
+.env
+.env.*
+private/
+secrets/
+
+# Signing credentials and provisioning material
+*.p12
+*.pfx
+*.mobileprovision
+*.jks
+*.keystore
+*.pem
+*.key

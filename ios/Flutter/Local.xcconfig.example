@@ -1,0 +1,11 @@
+// Machine-local iOS signing. Not committed (see .gitignore).
+//
+// Setup:
+//   cp ios/Flutter/Local.xcconfig.example ios/Flutter/Local.xcconfig
+// then set DEVELOPMENT_TEAM to your Apple Team ID (Xcode → Settings → Accounts).
+//
+// Debug.xcconfig / Release.xcconfig include this file with #include? so clones
+// without a local file still open cleanly.
+
+DEVELOPMENT_TEAM=YOUR_TEAM_ID
+CODE_SIGN_STYLE=Automatic
