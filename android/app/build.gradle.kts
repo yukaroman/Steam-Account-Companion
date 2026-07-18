@@ -11,9 +11,24 @@ val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.inputStream().use(keystoreProperties::load)
 }
+
+fun signingValue(propertyName: String, environmentName: String): String? =
+    keystoreProperties.getProperty(propertyName)?.takeIf(String::isNotBlank)
+        ?: System.getenv(environmentName)?.takeIf(String::isNotBlank)
+
+val releaseStoreFile = signingValue("storeFile", "ANDROID_KEYSTORE_PATH")
+val releaseStorePassword =
+    signingValue("storePassword", "ANDROID_KEYSTORE_PASSWORD")
+val releaseKeyAlias = signingValue("keyAlias", "ANDROID_KEY_ALIAS")
+val releaseKeyPassword =
+    signingValue("keyPassword", "ANDROID_KEY_PASSWORD")
 val hasReleaseSigning =
-    listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
-        .all { !keystoreProperties.getProperty(it).isNullOrBlank() }
+    listOf(
+        releaseStoreFile,
+        releaseStorePassword,
+        releaseKeyAlias,
+        releaseKeyPassword,
+    ).all { !it.isNullOrBlank() }
 
 android {
     namespace = "app.steamcompanion.steam_account_companion"
@@ -36,10 +51,10 @@ android {
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {
-                storeFile = file(keystoreProperties.getProperty("storeFile"))
-                storePassword = keystoreProperties.getProperty("storePassword")
-                keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = file(checkNotNull(releaseStoreFile))
+                storePassword = checkNotNull(releaseStorePassword)
+                keyAlias = checkNotNull(releaseKeyAlias)
+                keyPassword = checkNotNull(releaseKeyPassword)
             }
         }
     }
@@ -47,7 +62,7 @@ android {
     buildTypes {
         release {
             // Local test builds remain installable without publishing credentials.
-            // Store releases must provide android/key.properties (gitignored).
+            // Published releases provide key.properties or signing environment variables.
             signingConfig = signingConfigs.getByName(
                 if (hasReleaseSigning) "release" else "debug",
             )
