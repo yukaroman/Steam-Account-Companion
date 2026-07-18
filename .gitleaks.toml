@@ -1,0 +1,15 @@
+title = "Steam Account Companion secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Exact Base64 values of documented synthetic Steam test fixtures"
+regexTarget = "secret"
+regexes = [
+  '''dGVzdC1zaGFyZWQtc2VjcmV0ISE=''',
+  '''aWRlbnRpdHktc2VjcmV0LTE=''',
+  '''MTIzNDU2Nzg5MGFiY2RlZg==''',
+  '''1234567890abcdef''',
+  '''SGVsbG9Xb3JsZFNlY3JldCE=''',
+]

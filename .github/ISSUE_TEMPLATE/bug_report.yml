@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a reproducible problem without including real account data.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never attach a real maFile, `.sacbak`, Cookie, token, password,
+        recovery code or generated Steam Guard code.
+
+        Security vulnerabilities should be reported privately through
+        GitHub Security Advisories instead of this form.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem using synthetic or redacted data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Tap …
+        3. Observe …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - macOS
+        - Android
+        - Web
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App commit or version
+      placeholder: 0.1.0 or commit SHA
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      description: Remove cookies, tokens, account identifiers and secrets.
+      render: text
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Sensitive-data check
+      options:
+        - label: I removed all real Steam account data and secrets.
+          required: true

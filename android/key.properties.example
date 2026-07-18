@@ -1,0 +1,6 @@
+# Copy to android/key.properties (gitignored) and use absolute or app-relative paths.
+# Never commit the real keystore or passwords.
+storeFile=/absolute/path/to/steam-account-companion-release.jks
+storePassword=CHANGE_ME
+keyAlias=steam-account-companion
+keyPassword=CHANGE_ME
