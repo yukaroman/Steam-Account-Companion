@@ -8,6 +8,10 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-3.44.6-54C5F8.svg)](.fvmrc)
 
+<p align="center">
+  <img src="assets/branding/readme-overview-light.png" width="100%" alt="Steam Account Companion 功能概览：管理 Steam 账号、查看登录验证码、处理交易确认、数据完全本地化，需要自备网络环境">
+</p>
+
 一个面向**个人使用、本地优先**的 Flutter Steam 账号辅助工具，当前处于
 **Alpha / 实验阶段**（`0.1.0`）。
 
