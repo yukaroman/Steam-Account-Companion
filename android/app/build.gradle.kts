@@ -67,5 +67,5 @@ flutter {
 
 dependencies {
     // Required for LaunchTheme AppCompat parents used by local_auth.
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
 }
