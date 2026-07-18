@@ -33,14 +33,23 @@ jobs:
       - name: Set up Flutter
         shell: bash
         env:
+          FLUTTER_VERSION: 3.44.6
           FLUTTER_REVISION: ee80f08bbf97172ec030b8751ceab557177a34a6
         run: |
           flutter_dir="$RUNNER_TEMP/flutter"
           git init "$flutter_dir"
           git -C "$flutter_dir" remote add origin \
             https://github.com/flutter/flutter.git
-          git -C "$flutter_dir" fetch --depth=1 origin "$FLUTTER_REVISION"
-          git -C "$flutter_dir" checkout --detach FETCH_HEAD
+          git -C "$flutter_dir" fetch --depth=1 origin \
+            "refs/tags/$FLUTTER_VERSION:refs/tags/$FLUTTER_VERSION"
+          actual_revision="$(
+            git -C "$flutter_dir" rev-list -n 1 "$FLUTTER_VERSION"
+          )"
+          if [[ "$actual_revision" != "$FLUTTER_REVISION" ]]; then
+            echo "Unexpected Flutter revision: $actual_revision"
+            exit 1
+          fi
+          git -C "$flutter_dir" checkout --detach "$FLUTTER_VERSION"
           echo "$flutter_dir/bin" >> "$GITHUB_PATH"
           "$flutter_dir/bin/flutter" config --no-analytics
           "$flutter_dir/bin/flutter" --version
@@ -128,14 +137,23 @@ jobs:
       - name: Set up Flutter
         shell: bash
         env:
+          FLUTTER_VERSION: 3.44.6
           FLUTTER_REVISION: ee80f08bbf97172ec030b8751ceab557177a34a6
         run: |
           flutter_dir="$RUNNER_TEMP/flutter"
           git init "$flutter_dir"
           git -C "$flutter_dir" remote add origin \
             https://github.com/flutter/flutter.git
-          git -C "$flutter_dir" fetch --depth=1 origin "$FLUTTER_REVISION"
-          git -C "$flutter_dir" checkout --detach FETCH_HEAD
+          git -C "$flutter_dir" fetch --depth=1 origin \
+            "refs/tags/$FLUTTER_VERSION:refs/tags/$FLUTTER_VERSION"
+          actual_revision="$(
+            git -C "$flutter_dir" rev-list -n 1 "$FLUTTER_VERSION"
+          )"
+          if [[ "$actual_revision" != "$FLUTTER_REVISION" ]]; then
+            echo "Unexpected Flutter revision: $actual_revision"
+            exit 1
+          fi
+          git -C "$flutter_dir" checkout --detach "$FLUTTER_VERSION"
           echo "$flutter_dir/bin" >> "$GITHUB_PATH"
           "$flutter_dir/bin/flutter" config --no-analytics
           "$flutter_dir/bin/flutter" --version
@@ -178,14 +196,23 @@ jobs:
       - name: Set up Flutter
         shell: bash
         env:
+          FLUTTER_VERSION: 3.44.6
           FLUTTER_REVISION: ee80f08bbf97172ec030b8751ceab557177a34a6
         run: |
           flutter_dir="$RUNNER_TEMP/flutter"
           git init "$flutter_dir"
           git -C "$flutter_dir" remote add origin \
             https://github.com/flutter/flutter.git
-          git -C "$flutter_dir" fetch --depth=1 origin "$FLUTTER_REVISION"
-          git -C "$flutter_dir" checkout --detach FETCH_HEAD
+          git -C "$flutter_dir" fetch --depth=1 origin \
+            "refs/tags/$FLUTTER_VERSION:refs/tags/$FLUTTER_VERSION"
+          actual_revision="$(
+            git -C "$flutter_dir" rev-list -n 1 "$FLUTTER_VERSION"
+          )"
+          if [[ "$actual_revision" != "$FLUTTER_REVISION" ]]; then
+            echo "Unexpected Flutter revision: $actual_revision"
+            exit 1
+          fi
+          git -C "$flutter_dir" checkout --detach "$FLUTTER_VERSION"
           echo "$flutter_dir/bin" >> "$GITHUB_PATH"
           "$flutter_dir/bin/flutter" config --no-analytics
           "$flutter_dir/bin/flutter" --version
