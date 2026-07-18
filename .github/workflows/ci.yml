@@ -22,10 +22,19 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
-        with:
-          channel: stable
-          flutter-version: 3.44.6
+        shell: bash
+        env:
+          FLUTTER_REVISION: ee80f08bbf97172ec030b8751ceab557177a34a6
+        run: |
+          flutter_dir="$RUNNER_TEMP/flutter"
+          git init "$flutter_dir"
+          git -C "$flutter_dir" remote add origin \
+            https://github.com/flutter/flutter.git
+          git -C "$flutter_dir" fetch --depth=1 origin "$FLUTTER_REVISION"
+          git -C "$flutter_dir" checkout --detach FETCH_HEAD
+          echo "$flutter_dir/bin" >> "$GITHUB_PATH"
+          "$flutter_dir/bin/flutter" config --no-analytics
+          "$flutter_dir/bin/flutter" --version
 
       - name: Install dependencies
         run: flutter pub get
