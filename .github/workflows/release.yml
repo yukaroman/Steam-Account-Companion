@@ -1,0 +1,174 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, for example v0.1.0
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+
+      - name: Build APK
+        shell: bash
+        run: |
+          flutter pub get
+          flutter build apk --release
+          tag="${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}"
+          version="${tag#v}"
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk \
+            "dist/Steam-Account-Companion-${version}-android.apk"
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-android
+          path: dist/*
+          if-no-files-found: error
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+
+      - name: Build macOS app
+        shell: bash
+        run: |
+          flutter pub get
+          flutter build macos --release
+          tag="${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}"
+          version="${tag#v}"
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            "build/macos/Build/Products/Release/Steam Account Companion.app" \
+            "dist/Steam-Account-Companion-${version}-macos.zip"
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-macos
+          path: dist/*
+          if-no-files-found: error
+
+  build-ios-unsigned:
+    name: Build unsigned iOS IPA
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+
+      - name: Build unsigned IPA
+        shell: bash
+        run: |
+          flutter clean
+          flutter pub get
+          flutter build ios --release --no-codesign
+          app="build/ios/iphoneos/Runner.app"
+          if codesign -dv "$app" >/dev/null 2>&1; then
+            echo "Refusing to publish an unexpectedly signed iOS app."
+            exit 1
+          fi
+          if [[ -e "$app/embedded.mobileprovision" ]]; then
+            echo "Refusing to publish an embedded provisioning profile."
+            exit 1
+          fi
+          tag="${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}"
+          version="${tag#v}"
+          mkdir -p package/Payload dist
+          ditto "$app" package/Payload/Runner.app
+          ditto -c -k --sequesterRsrc --keepParent package/Payload \
+            "dist/Steam-Account-Companion-${version}-ios-unsigned.ipa"
+
+      - name: Upload unsigned iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ios-unsigned
+          path: dist/*
+          if-no-files-found: error
+
+  publish-draft:
+    name: Update draft release
+    needs:
+      - build-android
+      - build-macos
+      - build-ios-unsigned
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Generate automated checksums
+        shell: bash
+        run: |
+          cd dist
+          sha256sum Steam-Account-Companion-* \
+            > SHA256SUMS-automated.txt
+
+      - name: Create or update draft
+        shell: bash
+        run: |
+          if gh release view "$TAG_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" dist/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          else
+            gh release create "$TAG_NAME" dist/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "$TAG_NAME Alpha" \
+              --generate-notes \
+              --prerelease \
+              --draft
+          fi

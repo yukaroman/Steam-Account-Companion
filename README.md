@@ -117,6 +117,10 @@ iOS 真机测试：
 flutter run --release -d <device-id>
 ```
 
+GitHub Release 中的 `ios-unsigned.ipa` 不包含 Apple 签名或 provisioning
+profile，不能直接安装。使用者需通过自己的 Apple Developer 证书、描述文件或可信的
+本地侧载工具重新签名；不要向第三方提供 Apple 账号、证书私钥或描述文件。
+
 Android 本地测试包：
 
 ```bash
