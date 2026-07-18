@@ -102,9 +102,16 @@ jobs:
             exit 1
           fi
           expected_cert="be2ac70368ae1ed1afe40f036834c1f98dde5868dd2603fdcc98d4c6001da191"
+          cert_output="$(
+            "$apksigner" verify --verbose --print-certs "$apk" 2>&1
+          )"
+          printf '%s\n' "$cert_output"
           actual_cert="$(
-            "$apksigner" verify --print-certs "$apk" \
-              | sed -n 's/^Signer #1 certificate SHA-256 digest: //p'
+            printf '%s\n' "$cert_output" \
+              | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' \
+              | head -1 \
+              | tr '[:upper:]' '[:lower:]' \
+              | tr -d '[:space:]:'
           )"
           if [[ "$actual_cert" != "$expected_cert" ]]; then
             echo "Unexpected Android signing certificate: $actual_cert"
