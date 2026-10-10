@@ -20,7 +20,7 @@ dependencies:
   path: ^1.9.1
   path_provider: ^2.1.6
   pointycastle: ^4.0.0
-  shared_preferences: ^2.5.5
+  shared_preferences: ^2.5.6
   uuid: ^4.6.0
 
 dev_dependencies:
